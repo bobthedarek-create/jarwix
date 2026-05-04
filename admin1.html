@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Notification Panel</title>
+    <style>
+        body { font-family: sans-serif; background: #001f3f; color: white; padding: 20px; }
+        .notification { background: white; color: #001f3f; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 5px solid #28a745; }
+    </style>
+</head>
+<body>
+    <h2>Admin'e Bildirimler</h2>
+    <div id="bildirimler"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        
+        const db = getDatabase(initializeApp({ databaseURL: "https://canux-studios-default-rtdb.europe-west1.firebasedatabase.app/" }));
+        
+        onValue(ref(db, 'adminnotifications'), (snapshot) => {
+            const container = document.getElementById('bildirimler');
+            container.innerHTML = "";
+            
+            // Verileri bir diziye al
+            const dataArray = [];
+            snapshot.forEach((child) => {
+                dataArray.push(child.val());
+            });
+
+            // Diziyi tersine çevir (en yeni en üstte)
+            dataArray.reverse().forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'notification';
+                div.innerText = item.mesaj;
+                container.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
