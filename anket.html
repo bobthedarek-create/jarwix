@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Canux Studios - Anket</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; border-top: 5px solid #001f3f; text-align: center; }
+        h2 { color: #001f3f; }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { background: #001f3f; color: white; border: none; cursor: pointer; }
+        #anketArea, #adminArea { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="loginForm">
+        <h2>Canux Giriş</h2>
+        <input type="text" id="username" placeholder="Kullanıcı Adı">
+        <input type="password" id="pass" placeholder="Şifre">
+        <button onclick="girisYap()">Giriş Yap</button>
+    </div>
+
+    <div id="anketArea">
+        <h2 id="anketSoru">Yükleniyor...</h2>
+        <div id="siklar"></div>
+        <button onclick="location.reload()" style="background:#666;">Çıkış</button>
+    </div>
+
+    <div id="adminArea">
+        <h2>Admin Paneli</h2>
+        <input type="text" id="yeniSoru" placeholder="Soru">
+        <input type="text" id="yeniSiklar" placeholder="Şıklar (virgülle ayır)">
+        <button onclick="adminKaydet()">Ayarları Kaydet</button>
+        <button onclick="sifirla()" style="background:#cc0000;">TÜM VERİLERİ SIFIRLA</button>
+        <canvas id="anketChart"></canvas>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://canux-studios-default-rtdb.europe-west1.firebasedatabase.app/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    let mevcutKullanici = "";
+
+    function girisYap() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('pass').value;
+
+        if (u === "admin" && p === "yetki") {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('adminArea').style.display = 'block';
+            yukleAdmin();
+        } else {
+            db.ref('users/' + u).once('value', (snap) => {
+                if (snap.exists()) {
+                    mevcutKullanici = u;
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('anketArea').style.display = 'block';
+                    yukleAnket();
+                } else { alert("Kullanıcı bulunamadı!"); }
+            });
+        }
+    }
+
+    function yukleAnket() {
+        db.ref('anket').on('value', (snap) => {
+            const data = snap.val();
+            if (!data || !data.ayarlar) return;
+            document.getElementById('anketSoru').innerText = data.ayarlar.soru;
+            const sikDiv = document.getElementById('siklar');
+            sikDiv.innerHTML = "";
+            data.ayarlar.siklar.forEach(sik => {
+                const btn = document.createElement('button');
+                btn.innerText = sik;
+                btn.onclick = () => {
+                    // Oy kısıtlaması kontrolü
+                    db.ref('anket/oy_kayitlari/' + mevcutKullanici).once('value', (s) => {
+                        if (s.exists()) { alert("Bu hesapla zaten oy verdiniz!"); }
+                        else {
+                            let mevcut = data.oy_sayilari ? (data.oy_sayilari[sik] || 0) : 0;
+                            db.ref('anket/oy_sayilari/' + sik).set(mevcut + 1);
+                            db.ref('anket/oy_kayitlari/' + mevcutKullanici).set(true);
+                            alert("Oyunuz alındı!");
+                        }
+                    });
+                };
+                sikDiv.appendChild(btn);
+            });
+        });
+    }
+
+    function adminKaydet() {
+        db.ref('anket/ayarlar').set({
+            soru: document.getElementById('yeniSoru').value,
+            siklar: document.getElementById('yeniSiklar').value.split(',')
+        });
+        alert("Kaydedildi!");
+    }
+
+    function sifirla() { 
+        if(confirm("Tüm oylar ve kayıtlar silinsin mi?")) {
+            db.ref('anket/oy_sayilari').remove(); 
+            db.ref('anket/oy_kayitlari').remove(); 
+            alert("Sıfırlandı!"); 
+        }
+    }
+
+    function yukleAdmin() {
+        db.ref('anket/oy_sayilari').on('value', (snap) => {
+            const d = snap.val() || {};
+            const ctx = document.getElementById('anketChart').getContext('2d');
+            new Chart(ctx, { type: 'pie', data: { labels: Object.keys(d), datasets: [{ data: Object.values(d), backgroundColor: ['#001f3f', '#ff851b', '#2ecc40'] }] } });
+        });
+    }
+</script>
+</body>
+</html>
