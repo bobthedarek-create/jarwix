@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Canux - Admin Bildirim Paneli</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; border-top: 5px solid #001f3f; }
+        h2 { color: #001f3f; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #001f3f; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Bildirim Gönder</h2>
+    <input type="text" id="kimden" placeholder="Kimden (Admin Adı)">
+    <input type="text" id="kime" placeholder="Kime (Kullanıcı veya 'herkes')">
+    <input type="text" id="mesaj" placeholder="Bildirim İçeriği">
+    <button onclick="gonder()">Bildirim Gönder</button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    
+    const db = getDatabase(initializeApp({ databaseURL: "https://canux-studios-default-rtdb.europe-west1.firebasedatabase.app/" }));
+
+    window.gonder = async () => {
+        const kimden = document.getElementById('kimden').value;
+        const kime = document.getElementById('kime').value;
+        const mesaj = document.getElementById('mesaj').value;
+        
+        if (!kimden || !kime || !mesaj) return alert("Tüm alanları doldur!");
+
+        const finalMesaj = `${kimden} sana şunu gönderdi: ${mesaj}`;
+
+        if (kime === "herkes") {
+            const usersSnapshot = await get(ref(db, 'users'));
+            if (usersSnapshot.exists()) {
+                usersSnapshot.forEach(child => {
+                    set(ref(db, 'user-notifications/' + child.key + '/' + Date.now()), { mesaj: finalMesaj });
+                });
+                alert("Bildirim herkese başarıyla gönderildi!");
+            }
+        } else {
+            // Belirli bir kullanıcıya gönderim
+            await set(ref(db, 'user-notifications/' + kime + '/' + Date.now()), { mesaj: finalMesaj });
+            alert(kime + " kişisine bildirim gönderildi!");
+        }
+    };
+</script>
+</body>
+</html>
