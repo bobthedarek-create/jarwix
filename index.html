@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canux Studios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #d5f2dd; /* Nane Yeşili */
+            --primary: #001f3f;  /* Lacivert */
+            --white: #ffffff;
+            --accent: #2ecc71;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVİGASYON --- */
+        nav {
+            background: var(--primary);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: bold;
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-links button:hover {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        /* --- HERO (GİRİŞ) BÖLÜMÜ --- */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* --- BUTON PANELİ --- */
+        .main-container {
+            max-width: 1000px;
+            margin: -50px auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .canux-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-top: 6px solid var(--primary);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .canux-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .canux-card h3 {
+            margin-top: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .canux-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .canux-btn:hover {
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .canux-btn.alt {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- ALT BİLGİ --- */
+        footer {
+            background: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">CANUX</div>
+        <div class="nav-links">
+            <button onclick="window.location.href='#'">Ana Sayfa</button>
+            <button onclick="alert('Yakında!')">Projeler</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>CANUX STUDIOS</h1>
+        <p>Haber ajansı, yarışma organizatörü, programlayıcı vs.</p>
+    </section>
+
+    <div class="main-container">
+        
+        <!-- BÖLÜM 1: SİSTEMLER -->
+        <div class="canux-card">
+            <h3>MEGA Projeler</h3>
+            <p>Bu projeler olmadan Canux bir hiç.</p>
+            <!-- Linkleri href kısmına yazabilirsin -->
+            <a href="https://www.cangpt.onrender.com/" class="canux-btn">CANGPT</a>
+            <a href="jarwix.html" class="canux-btn alt">JARWIX</a>
+        </div>
+
+        <!-- BÖLÜM 2: SERVİSLER -->
+        <div class="canux-card">
+            <h3>Haber Ajansı</h3>
+            <p>Canux tarafından haberler.</p>
+            <a href="anket.html" class="canux-btn">ANKETLER</a>
+        </div>
+
+        <!-- BÖLÜM 3: DESTEK -->
+        <div class="canux-card">
+            <h3>Projeler</h3>
+            <p>Çok da önemli olmayan projeler.</p>
+            <a href="https://sites.google.com/view/translateocans/ana-sayfa" class="canux-btn">TRANSLATE O' CAN'S</a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Canux Studios. Hiçbir Hakkı Saklı Değildir 👽</p>
+    </footer>
+
+    <script>
+        // İstersen buraya butonlara özel animasyonlar veya
+        // Sayfa içi geçiş efektleri ekleyebilirsin.
+        console.log("Canux Merkezi Hazır.");
+    </script>
+</body>
+</html>
