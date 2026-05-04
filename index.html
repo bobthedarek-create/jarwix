@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarwix OS | Canux Studios</title>
+    <style>
+        /* --- ARISTOTLE TEMASI VE GENEL TASARIM --- */
+        :root {
+            --bg-mint: #d5f2dd;
+            --dark-blue: #001f3f;
+            --white: #ffffff;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-mint);
+            color: var(--dark-blue);
+        }
+
+        /* Sayfa Yönetimi */
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Kart Yapısı */
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: var(--card-shadow); 
+            max-width: 350px; 
+            margin: 20px auto; 
+            border-top: 5px solid var(--dark-blue); 
+        }
+
+        .header-container {
+            border: 2px solid var(--dark-blue);
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* Düğmeler ve Girdiler */
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        .jarwix-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .jarwix-btn:hover { background: #003366; transform: translateY(-2px); }
+        .btn-red { background: #cc0000; }
+        .btn-green { background: #28a745; }
+
+        /* Bildirim Paneli */
+        #liste { height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background: #fff; margin: 15px 0; border-radius: 6px; }
+        .bildirim { background: #f9f9f9; padding: 8px; margin-bottom: 8px; border-left: 4px solid var(--dark-blue); font-size: 14px; }
+
+        .info-box { background: #f0f2f5; padding: 15px; border-radius: 6px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- [SAYFA 1] ANA EKRAN -->
+    <div id="page-home" class="page active">
+        <div class="header-container">
+            <h1>Jarwix</h1>
+            <p>Canux Studios tarafından</p>
+        </div>
+        <div style="max-width: 400px; margin: 0 auto;">
+            <h3 style="text-align:center;">JarwixTools</h3>
+            <button class="jarwix-btn" onclick="nav('page-market')">Jarx Marketi</button>
+            <button class="jarwix-btn" onclick="nav('page-bildirim')">Bildirimlerim</button>
+            <button class="jarwix-btn" onclick="nav('page-hesap')">Hesap Bilgilendirme Sistemi</button>
+            <button class="jarwix-btn" onclick="nav('page-rapor')">Jarr-Rapor</button>
+            <button class="jarwix-btn" onclick="nav('page-iletisim')">İletişim Formu</button>
+            <hr>
+            <h3 style="text-align:center;">CanuxTools</h3>
+            <button class="jarwix-btn" onclick="nav('page-admin-giris')">Canux Admin Girişi</button>
+        </div>
+    </div>
+
+    <!-- [SAYFA 2] JARX MARKETİ -->
+    <div id="page-market" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <div id="market-login">
+                <h2>Market Giriş</h2>
+                <input type="text" id="m-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="m-pass" placeholder="Şifre">
+                <button class="jarwix-btn" onclick="loginAction('market')">Giriş Yap</button>
+            </div>
+            <div id="market-area" style="display:none;">
+                <h2>Jarwix Marketi</h2>
+                <p>Bakiyen: <span id="m-bakiye">0</span> Jarx</p>
+                <select id="m-urunler">
+                    <option value="atlama">ÜYELİĞE ATLAMA (500 Jarx)</option>
+                    <option value="belge">YARIŞMA İZLEYİCİ BELGESİ (50 Jarx)</option>
+                    <option value="site">SİTE YAPTIR (1500 Jarx)</option>
+                </select>
+                <button class="jarwix-btn btn-green" onclick="satinAl()">Satın Al</button>
+                <button class="jarwix-btn btn-red" onclick="nav('page-home')">Çıkış</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [SAYFA 3] BİLDİRİMLERİM -->
+    <div id="page-bildirim" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <div id="notif-login">
+                <h2>Bildirim Giriş</h2>
+                <input type="text" id="n-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="n-pass" placeholder="Şifre">
+                <button class="jarwix-btn" onclick="loginAction('notif')">Giriş Yap</button>
+            </div>
+            <div id="notif-area" style="display:none;">
+                <h2 id="n-baslik">Bildirimlerin</h2>
+                <div id="liste"></div>
+                <button class="jarwix-btn btn-red" onclick="nav('page-home')">Çıkış</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [SAYFA 4] HESAP BİLGİLERİ / ADMIN PANEL -->
+    <div id="page-hesap" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <div id="acc-login">
+                <h2>Hesap Giriş</h2>
+                <input type="text" id="a-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="a-pass" placeholder="Şifre">
+                <button class="jarwix-btn" onclick="loginAction('acc')">Giriş Yap</button>
+            </div>
+            <div id="acc-display" style="display:none;">
+                <h2>Hesap Bilgileri</h2>
+                <div class="info-box">
+                    <p><strong>Kullanıcı:</strong> <span id="outUser"></span></p>
+                    <p><strong>Üyelik:</strong> <span id="outRank"></span></p>
+                    <p><strong>Jarx:</strong> <span id="outCcp"></span></p>
+                    <p><strong>Not:</strong> <span id="outNote"></span></p>
+                </div>
+                <button class="jarwix-btn btn-red" onclick="nav('page-home')">Çıkış</button>
+            </div>
+            <div id="acc-admin" style="display:none;">
+                <h2>Admin Paneli</h2>
+                <input type="text" id="admUser" placeholder="Hedef Kullanıcı">
+                <input type="password" id="admPass" placeholder="Yeni Şifre">
+                <select id="admRank">
+                    <option value="NORMAL">NORMAL</option>
+                    <option value="VIP">VIP</option>
+                    <option value="ULTRA">ULTRA</option>
+                </select>
+                <input type="text" id="admCcp" placeholder="Jarx">
+                <input type="text" id="admNote" placeholder="Not">
+                <button class="jarwix-btn btn-green" onclick="adminKaydet()">Kaydet/Güncelle</button>
+                <button class="jarwix-btn btn-red" onclick="adminSil()">Sil</button>
+                <button class="jarwix-btn" onclick="nav('page-home')">Geri</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [SAYFA 5] JARR-RAPOR -->
+    <div id="page-rapor" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <div id="rapor-login">
+                <h2>Rapor Giriş</h2>
+                <input type="text" id="r-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="r-pass" placeholder="Şifre">
+                <button class="jarwix-btn" onclick="loginAction('rapor')">Giriş Yap</button>
+            </div>
+            <div id="rapor-area" style="display:none;">
+                <h2>Jarr-Rapor Gönder</h2>
+                <input type="text" id="raporNedeni" placeholder="Rapor nedeni:">
+                <button class="jarwix-btn btn-green" onclick="raporGonder()">Gönder</button>
+                <button class="jarwix-btn" onclick="nav('page-home')">Geri</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [SAYFA 6] İLETİŞİM FORMU (ADMIN İLETİŞİM) -->
+    <div id="page-iletisim" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <div id="msg-login">
+                <h2>İletişim Giriş</h2>
+                <input type="text" id="i-user" placeholder="Kullanıcı Adı">
+                <input type="password" id="i-pass" placeholder="Şifre">
+                <button class="jarwix-btn" onclick="loginAction('msg')">Giriş Yap</button>
+            </div>
+            <div id="msg-area" style="display:none;">
+                <h2>Mesajı Gönder</h2>
+                <input type="text" id="msgIcerik" placeholder="Mesajınız:">
+                <button class="jarwix-btn btn-green" onclick="mesajGonder()">Gönder</button>
+                <button class="jarwix-btn" onclick="nav('page-home')">Geri</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [SAYFA 7] CANUX ADMIN GİRİŞİ -->
+    <div id="page-admin-giris" class="page">
+        <button class="jarwix-btn" style="width:auto;" onclick="nav('page-home')">← ANA SAYFA</button>
+        <div class="card">
+            <h2>Canux Admin Giriş</h2>
+            <input type="text" id="ca-user" placeholder="Kullanıcı Adı">
+            <input type="password" id="ca-pass" placeholder="Şifre">
+            <button class="jarwix-btn" onclick="loginAction('canux-adm')">Giriş Yap</button>
+        </div>
+    </div>
+
+    <!-- FIREBASE & MANTIK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, child, update, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = { databaseURL: "https://canux-studios-default-rtdb.europe-west1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let aktifUser = "", userData = {};
+
+        async function hash(str) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // GLOBAL NAVIGASYON
+        window.nav = (id) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            // Sayfa değişiminde formları sıfırlayabilirsiniz
+        };
+
+        // GİRİŞ KONTROL MERKEZİ
+        window.loginAction = async (type) => {
+            let u, p;
+            if(type==='market') { u = document.getElementById('m-user').value; p = document.getElementById('m-pass').value; }
+            if(type==='notif') { u = document.getElementById('n-user').value; p = document.getElementById('n-pass').value; }
+            if(type==='acc') { u = document.getElementById('a-user').value; p = document.getElementById('a-pass').value; }
+            if(type==='rapor') { u = document.getElementById('r-user').value; p = document.getElementById('r-pass').value; }
+            if(type==='msg') { u = document.getElementById('i-user').value; p = document.getElementById('i-pass').value; }
+            if(type==='canux-adm') { u = document.getElementById('ca-user').value; p = document.getElementById('ca-pass').value; }
+
+            // Admin Yetki Kontrolü (Genel)
+            if (u === "admin" && p === "yetki") {
+                if(type === 'acc') {
+                    document.getElementById('acc-login').style.display = 'none';
+                    document.getElementById('acc-admin').style.display = 'block';
+                } else if(type === 'canux-adm') {
+                    window.open("https://sites.google.com/view/canux-studios/adminpanel", "_blank");
+                }
+                return;
+            }
+
+            const snapshot = await get(child(ref(db), `users/${u}`));
+            if (snapshot.exists() && snapshot.val().password === await hash(p)) {
+                aktifUser = u; userData = snapshot.val();
+                
+                if(type==='market') {
+                    document.getElementById('market-login').style.display = 'none';
+                    document.getElementById('market-area').style.display = 'block';
+                    document.getElementById('m-bakiye').innerText = userData.ccp;
+                }
+                if(type==='notif') {
+                    document.getElementById('notif-login').style.display = 'none';
+                    document.getElementById('notif-area').style.display = 'block';
+                    loadNotifications(u);
+                }
+                if(type==='acc') {
+                    document.getElementById('acc-login').style.display = 'none';
+                    document.getElementById('acc-display').style.display = 'block';
+                    document.getElementById('outUser').innerText = u;
+                    document.getElementById('outRank').innerText = userData.rank || "NORMAL";
+                    document.getElementById('outCcp').innerText = userData.ccp;
+                    document.getElementById('outNote').innerText = userData.operatorNote;
+                }
+                if(type==='rapor') {
+                    document.getElementById('rapor-login').style.display = 'none';
+                    document.getElementById('rapor-area').style.display = 'block';
+                }
+                if(type==='msg') {
+                    document.getElementById('msg-login').style.display = 'none';
+                    document.getElementById('msg-area').style.display = 'block';
+                }
+            } else { alert("Hatalı Giriş!"); }
+        };
+
+        // BİLDİRİM YÜKLEME
+        function loadNotifications(u) {
+            onValue(ref(db, 'user-notifications/' + u), (snap) => {
+                const liste = document.getElementById('liste');
+                liste.innerHTML = "";
+                snap.forEach(c => {
+                    const d = document.createElement('div');
+                    d.className = 'bildirim';
+                    d.innerText = c.val().mesaj || c.val();
+                    liste.appendChild(d);
+                });
+                liste.scrollTop = liste.scrollHeight;
+                document.getElementById('n-baslik').innerText = `Bildirimlerin (${snap.size})`;
+            });
+        }
+
+        // MARKET İŞLEMLERİ
+        window.satinAl = async () => {
+            const s = document.getElementById('m-urunler').value;
+            let b = parseInt(userData.ccp);
+            if(s==='atlama' && b>=500) {
+                await update(ref(db, 'users/'+aktifUser), {ccp:(b-500).toString(), rank: userData.rank==="NORMAL"?"VIP":"ULTRA"});
+            } else if(s==='belge' && b>=50) {
+                await update(ref(db, 'users/'+aktifUser), {ccp:(b-50).toString(), operatorNote: (userData.operatorNote||"")+" -BELGELİ-"});
+            } else if(s==='site' && b>=1500) {
+                await set(ref(db, 'adminnotifications/'+Date.now()), {mesaj: aktifUser+" site istiyor!"});
+                await update(ref(db, 'users/'+aktifUser), {ccp:(b-1500).toString()});
+            } else { return alert("Yetersiz Jarx!"); }
+            alert("Başarılı!"); location.reload();
+        };
+
+        // RAPOR VE MESAJ
+        window.raporGonder = async () => {
+            const n = document.getElementById('raporNedeni').value;
+            await set(ref(db, 'adminnotifications/'+Date.now()), {mesaj: aktifUser+" RAPOR: "+n});
+            alert("İletildi!"); nav('page-home');
+        };
+
+        window.mesajGonder = async () => {
+            const m = document.getElementById('msgIcerik').value;
+            await set(ref(db, 'adminnotifications/'+Date.now()), {mesaj: aktifUser+" MESAJ: "+m});
+            alert("İletildi!"); nav('page-home');
+        };
+
+        // ADMIN PANEL İŞLEMLERİ
+        window.adminKaydet = async () => {
+            const u = document.getElementById('admUser').value;
+            const p = document.getElementById('admPass').value;
+            if(!u || !p) return alert("Eksik bilgi!");
+            await set(ref(db, 'users/'+u), { password: await hash(p), rank: document.getElementById('admRank').value, ccp: document.getElementById('admCcp').value, operatorNote: document.getElementById('admNote').value });
+            alert("Kaydedildi!");
+        };
+
+        window.adminSil = async () => {
+            const u = document.getElementById('admUser').value;
+            if(u) { await remove(ref(db, 'users/'+u)); alert("Silindi!"); }
+        };
+
+    </script>
+</body>
+</html>
