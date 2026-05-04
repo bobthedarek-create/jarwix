@@ -1,0 +1,30 @@
+<div id="mesajlar" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; background: #fff; margin-bottom: 10px;"></div>
+<input type="text" id="isim" placeholder="İsmin..." style="width: 25%; padding: 5px;">
+<input type="text" id="mesaj" placeholder="Mesajın..." style="width: 50%; padding: 5px;">
+<button onclick="mesajGonder()" style="padding: 5px 15px;">Gönder</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+  // Sadece buradaki databaseURL alanı yeni adresinle değiştirildi
+  const app = initializeApp({ databaseURL: "https://kiwiichat-admin-default-rtdb.europe-west1.firebasedatabase.app/" });
+  const db = getDatabase(app);
+
+  window.mesajGonder = () => {
+    const is = document.getElementById('isim').value || 'Anonim';
+    const msj = document.getElementById('mesaj').value;
+    if(!msj) return;
+    push(ref(db, 'mesajlar'), { isim: is, metin: msj });
+    document.getElementById('mesaj').value = '';
+  };
+
+  onValue(ref(db, 'mesajlar'), (snapshot) => {
+    const liste = document.getElementById('mesajlar');
+    liste.innerHTML = "";
+    snapshot.forEach((c) => {
+      liste.innerHTML += `<div><b>${c.val().isim}:</b> ${c.val().metin}</div>`;
+    });
+    liste.scrollTop = liste.scrollHeight;
+  });
+</script>
