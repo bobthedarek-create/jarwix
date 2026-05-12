@@ -2,12 +2,12 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Polimer Savaşları v5 - Creeper Edition</title>
+    <title>Polimer Savaşları v5 - Creeper Fixed</title>
     <style>
         :root { 
             --text: #ffffff; 
-            /* GÜVENLİ CREEPER DOKUSU */
-            --img-creeper: url('https://i.imgur.com/8mS9R6X.png');
+            /* Senin paylaştığın çalışan link */
+            --img-creeper: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Creeper_Face.png/600px-Creeper_Face.png');
             
             --img-dirt: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/dirt.png');
             --img-stone: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/stone.png');
@@ -16,60 +16,81 @@
         }
 
         body { 
-            background-color: #0f1c0e; 
-            background-image: var(--img-creeper);
-            background-size: 64px; 
+            background-color: #0a140a; 
+            background-image: 
+                linear-gradient(rgba(10, 20, 10, 0.8), rgba(10, 20, 10, 0.8)), 
+                var(--img-creeper);
+            background-size: 120px; 
             background-repeat: repeat;
             background-attachment: fixed;
+            image-rendering: pixelated; 
             
             color: var(--text); 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             text-align: center; margin: 0; padding-bottom: 50px;
-            image-rendering: pixelated; 
         }
 
-        /* Diğer stil ayarları sabit */
-        .login-box { margin-top: 100px; background: rgba(0,0,0,0.92); padding: 40px; border: 4px solid #3fb950; display: inline-block; box-shadow: 0 0 30px rgba(0,255,0,0.2); }
-        input { background: #000; border: 2px solid #3fb950; color: white; padding: 12px; margin: 10px; width: 220px; outline: none; }
+        .login-box { margin-top: 100px; background: rgba(0,0,0,0.9); padding: 40px; border: 4px solid #3fb950; display: inline-block; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        input { background: #000; border: 2px solid #555; color: white; padding: 12px; margin: 10px; width: 220px; outline: none; }
         
-        #game-zone { display: none; padding: 20px; max-width: 1000px; margin: 20px auto; background: rgba(0,0,0,0.85); border: 2px solid #333; }
+        #game-zone { display: none; padding: 20px; max-width: 1000px; margin: 20px auto; background: rgba(0,0,0,0.85); border: 2px solid #333; box-shadow: 0 0 50px rgba(0,0,0,1); }
 
         .grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 25px; }
-        .card { padding: 10px; width: 220px; border: 4px solid #222; background-repeat: repeat; background-size: 64px; }
-        .card-inner { background: rgba(0,0,0,0.85); padding: 15px; border: 2px solid rgba(255,255,255,0.1); }
+        .card { 
+            padding: 10px; width: 220px; border: 4px solid #222;
+            background-repeat: repeat; background-size: 64px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+        }
         
         .bg-0 { background-image: var(--img-dirt); } 
         .bg-1 { background-image: var(--img-stone); } 
         .bg-2 { background-image: var(--img-ice); } 
         .bg-3 { background-image: var(--img-sand); } 
 
+        .card-inner { background: rgba(0,0,0,0.85); padding: 15px; border: 2px solid rgba(255,255,255,0.1); }
+
         .map-container { background: rgba(0,0,0,0.95); margin-top: 30px; padding: 20px; border: 4px solid #444; text-align: left; }
         .map-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .map-name { width: 150px; font-weight: bold; color: #3fb950; }
-        .map-slots { display: flex; gap: 3px; }
-        .map-tile { width: 25px; height: 25px; background: #111; border: 1px solid #333; background-size: cover; opacity: 0.1; }
+        .map-tile { width: 25px; height: 25px; background: #111; border: 1px solid #333; background-size: cover; opacity: 0.1; transition: 0.5s; }
         .map-tile.active { opacity: 1; border-color: #fff; }
 
+        .chat-container { background: rgba(20, 20, 20, 0.9); border: 2px solid #444; margin-top: 25px; padding: 15px; text-align: left; }
+        #chat-messages { height: 130px; overflow-y: auto; background: #000; padding: 10px; border: 1px solid #333; margin-bottom: 10px; font-size: 0.9em; }
+        
         button { background: #3fb950; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; border-bottom: 4px solid #238636; }
         button:hover { filter: brightness(1.1); }
+        button:active { transform: translateY(2px); border-bottom: 2px solid #238636; }
         .btn-attack { background: #da3633; border-color: #8a211f; }
+        .btn-office { background: #d29922; border-color: #9c711a; }
         #timer { color: #f1c40f; font-weight: bold; margin: 10px 0; display: block; }
     </style>
 </head>
 <body>
 
     <div id="login-zone" class="login-box">
-        <h1 style="color: #3fb950; margin: 0 0 20px 0;">POLİMER SAVAŞLARI</h1>
+        <h1 style="color: #3fb950; text-shadow: 2px 2px #000;">POLİMER SAVAŞLARI</h1>
         <input type="password" id="passInput" placeholder="Ülke Kodunuz"> <br>
         <button onclick="login()">SİSTEME BAĞLAN</button>
     </div>
 
     <div id="game-zone">
-        <h2 id="welcome" style="margin: 0; color: #58a6ff;">Veriler Alınıyor...</h2>
-        <div id="timer">Gelir Bekleniyor...</div>
+        <h2 id="welcome" style="color: #58a6ff;">Veriler Alınıyor...</h2>
+        <div id="timer">Gelir Hesaplanıyor...</div>
+
         <div class="grid" id="main-ui"></div>
+
+        <div class="chat-container">
+            <h4 style="margin:0 0 10px 0; color: #3fb950;">Küresel Haberleşme</h4>
+            <div id="chat-messages"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="chatMsg" style="flex:1;" placeholder="Mesaj..." onkeydown="if(event.key==='Enter') sendChat()">
+                <button style="width:100px;" onclick="sendChat()">GÖNDER</button>
+            </div>
+        </div>
+
         <div class="map-container">
-            <h3 style="margin-top:0; color: #f1c40f;">🌍 STRATEJİK ALAN HARİTASI</h3>
+            <h3 style="color: #f1c40f;">🌍 STRATEJİK ALAN HARİTASI</h3>
             <div id="strategy-map"></div>
         </div>
     </div>
@@ -90,9 +111,10 @@
                     document.getElementById('login-zone').style.display = 'none';
                     document.getElementById('game-zone').style.display = 'block';
                     updateUI();
-                    setInterval(updateUI, 5000); 
+                    setInterval(updateUI, 4000); 
+                    setInterval(checkIncome, 10000);
                 } else { alert("Kod Hatalı!"); }
-            } catch(e) { alert("Bağlantı hatası!"); }
+            } catch(e) { alert("Sunucu hatası!"); }
         }
 
         async function updateUI() {
@@ -113,38 +135,92 @@
                 ui.innerHTML += `
                     <div class="card bg-${index % 4}">
                         <div class="card-inner">
-                            <h3>${c.name} ${isMe ? "⭐" : ""}</h3>
-                            <p>💎 Polimer: ${Math.floor(c.polymer || 0)}</p>
-                            <p>🏗️ Ofis: ${c.offices || 0} | 🗺️ Alan: ${c.areas || 0}</p>
-                            ${isMe ? 
-                                `<button onclick="buy('areas', 15)">ALAN AL (15P)</button>
-                                 <button onclick="buy('offices', 20)" style="background:#d29922; border-color:#9e7013">OFİS KUR (20P)</button>` : 
-                                `<button class="btn-attack" onclick="attack('${id}')">SALDIR (10P)</button>`}
+                            <h3 style="margin:0;">${c.name} ${isMe ? "⭐" : ""}</h3>
+                            <div style="margin: 15px 0; font-size: 0.85em; text-align: left;">
+                                💎 Polimer: <b>${Math.floor(c.polymer || 0)}</b><br>
+                                🏗️ Ofisler: <b>${c.offices || 0}</b><br>
+                                🗺️ Alanlar: <b>${c.areas || 0}/10</b>
+                            </div>
+                            ${isMe ? `
+                                <button onclick="buyArea()">ALAN AL (15P)</button>
+                                <button class="btn-office" onclick="buyOffice()">OFİS KUR (20P)</button>
+                            ` : `
+                                <button class="btn-attack" onclick="attack('${id}')">FÜZE FIRLAT (10P)</button>
+                            `}
                         </div>
                     </div>
                 `;
 
                 let tiles = "";
                 for(let i=1; i<=10; i++) {
-                    tiles += `<div class="map-tile ${i <= (c.areas || 0) ? 'active' : ''}" style="background-image: ${tex}"></div>`;
+                    const active = i <= (c.areas || 0);
+                    tiles += `<div class="map-tile ${active ? 'active' : ''}" style="background-image: ${tex}"></div>`;
                 }
                 mapDiv.innerHTML += `<div class="map-row"><div class="map-name">${c.name}</div><div class="map-slots">${tiles}</div></div>`;
             });
+
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML = "";
+            const msgs = data.messages || {};
+            Object.values(msgs).reverse().slice(0, 15).forEach(m => {
+                chatBox.innerHTML += `<div style="border-bottom:1px solid #222; padding:3px;"><b>${m.user}:</b> ${m.text}</div>`;
+            });
         }
 
-        async function buy(type, cost) {
-            const me = db[myId];
-            let updates = { polymer: me.polymer - cost };
-            updates[type] = (me[type] || 0) + 1;
-            await fetch(`${DB_URL}countries/${myId}.json`, { method: 'PATCH', body: JSON.stringify(updates) });
-            updateUI();
+        async function buyArea() {
+            const c = db[myId];
+            if (c.polymer >= 15 && (c.areas || 0) < 10) {
+                await fetch(`${DB_URL}countries/${myId}.json`, {
+                    method: 'PATCH', body: JSON.stringify({ polymer: c.polymer - 15, areas: (c.areas || 0) + 1 })
+                });
+                updateUI();
+            }
+        }
+
+        async function buyOffice() {
+            const c = db[myId];
+            if (c.polymer >= 20) {
+                await fetch(`${DB_URL}countries/${myId}.json`, {
+                    method: 'PATCH', body: JSON.stringify({ polymer: c.polymer - 20, offices: (c.offices || 0) + 1 })
+                });
+                updateUI();
+            }
         }
 
         async function attack(targetId) {
             const me = db[myId]; const target = db[targetId];
-            await fetch(`${DB_URL}countries/${myId}.json`, { method: 'PATCH', body: JSON.stringify({ polymer: me.polymer - 10 }) });
-            await fetch(`${DB_URL}countries/${targetId}.json`, { method: 'PATCH', body: JSON.stringify({ areas: (target.areas || 0) - 1 }) });
-            updateUI();
+            if (me.polymer >= 10 && (target.areas || 0) > 0) {
+                await fetch(`${DB_URL}countries/${myId}.json`, { method: 'PATCH', body: JSON.stringify({ polymer: me.polymer - 10 }) });
+                await fetch(`${DB_URL}countries/${targetId}.json`, { method: 'PATCH', body: JSON.stringify({ areas: target.areas - 1 }) });
+                updateUI();
+            }
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chatMsg');
+            if(!input.value.trim()) return;
+            await fetch(`${DB_URL}messages.json`, {
+                method: 'POST',
+                body: JSON.stringify({ user: db[myId].name, text: input.value, time: Date.now() })
+            });
+            input.value = ""; updateUI();
+        }
+
+        function checkIncome() {
+            const c = db[myId]; if(!c || !c.last_income) return;
+            const diff = Date.now() - c.last_income;
+            const interval = 10 * 60 * 60 * 1000; 
+            if (diff >= interval) {
+                const amount = 5 + (c.offices || 0);
+                fetch(`${DB_URL}countries/${myId}.json`, {
+                    method: 'PATCH', body: JSON.stringify({ polymer: (c.polymer || 0) + amount, last_income: Date.now() })
+                }).then(() => updateUI());
+            } else {
+                const kalan = interval - diff;
+                const saat = Math.floor(kalan / 3600000);
+                const dk = Math.floor((kalan % 3600000) / 60000);
+                document.getElementById('timer').innerText = `Sıradaki Gelir: ${saat}s ${dk}dk`;
+            }
         }
     </script>
 </body>
