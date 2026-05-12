@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Polimer Savaşları v5 - Creeper Edition</title>
+    <style>
+        :root { 
+            --text: #ffffff; 
+            /* GÜVENLİ CREEPER DOKUSU */
+            --img-creeper: url('https://i.imgur.com/8mS9R6X.png');
+            
+            --img-dirt: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/dirt.png');
+            --img-stone: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/stone.png');
+            --img-ice: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/packed_ice.png');
+            --img-sand: url('https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.17.1/blocks/sand.png');
+        }
+
+        body { 
+            background-color: #0f1c0e; 
+            background-image: var(--img-creeper);
+            background-size: 64px; 
+            background-repeat: repeat;
+            background-attachment: fixed;
+            
+            color: var(--text); 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            text-align: center; margin: 0; padding-bottom: 50px;
+            image-rendering: pixelated; 
+        }
+
+        /* Diğer stil ayarları sabit */
+        .login-box { margin-top: 100px; background: rgba(0,0,0,0.92); padding: 40px; border: 4px solid #3fb950; display: inline-block; box-shadow: 0 0 30px rgba(0,255,0,0.2); }
+        input { background: #000; border: 2px solid #3fb950; color: white; padding: 12px; margin: 10px; width: 220px; outline: none; }
+        
+        #game-zone { display: none; padding: 20px; max-width: 1000px; margin: 20px auto; background: rgba(0,0,0,0.85); border: 2px solid #333; }
+
+        .grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 25px; }
+        .card { padding: 10px; width: 220px; border: 4px solid #222; background-repeat: repeat; background-size: 64px; }
+        .card-inner { background: rgba(0,0,0,0.85); padding: 15px; border: 2px solid rgba(255,255,255,0.1); }
+        
+        .bg-0 { background-image: var(--img-dirt); } 
+        .bg-1 { background-image: var(--img-stone); } 
+        .bg-2 { background-image: var(--img-ice); } 
+        .bg-3 { background-image: var(--img-sand); } 
+
+        .map-container { background: rgba(0,0,0,0.95); margin-top: 30px; padding: 20px; border: 4px solid #444; text-align: left; }
+        .map-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .map-name { width: 150px; font-weight: bold; color: #3fb950; }
+        .map-slots { display: flex; gap: 3px; }
+        .map-tile { width: 25px; height: 25px; background: #111; border: 1px solid #333; background-size: cover; opacity: 0.1; }
+        .map-tile.active { opacity: 1; border-color: #fff; }
+
+        button { background: #3fb950; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; border-bottom: 4px solid #238636; }
+        button:hover { filter: brightness(1.1); }
+        .btn-attack { background: #da3633; border-color: #8a211f; }
+        #timer { color: #f1c40f; font-weight: bold; margin: 10px 0; display: block; }
+    </style>
+</head>
+<body>
+
+    <div id="login-zone" class="login-box">
+        <h1 style="color: #3fb950; margin: 0 0 20px 0;">POLİMER SAVAŞLARI</h1>
+        <input type="password" id="passInput" placeholder="Ülke Kodunuz"> <br>
+        <button onclick="login()">SİSTEME BAĞLAN</button>
+    </div>
+
+    <div id="game-zone">
+        <h2 id="welcome" style="margin: 0; color: #58a6ff;">Veriler Alınıyor...</h2>
+        <div id="timer">Gelir Bekleniyor...</div>
+        <div class="grid" id="main-ui"></div>
+        <div class="map-container">
+            <h3 style="margin-top:0; color: #f1c40f;">🌍 STRATEJİK ALAN HARİTASI</h3>
+            <div id="strategy-map"></div>
+        </div>
+    </div>
+
+    <script>
+        const DB_URL = "https://limetree--1-default-rtdb.europe-west1.firebasedatabase.app/";
+        let myId = "";
+        let db = {};
+        const textures = ['var(--img-dirt)', 'var(--img-stone)', 'var(--img-ice)', 'var(--img-sand)'];
+
+        async function login() {
+            const code = document.getElementById('passInput').value;
+            try {
+                const res = await fetch(`${DB_URL}countries.json`);
+                db = await res.json() || {};
+                myId = Object.keys(db).find(key => db[key].code === code);
+                if (myId) {
+                    document.getElementById('login-zone').style.display = 'none';
+                    document.getElementById('game-zone').style.display = 'block';
+                    updateUI();
+                    setInterval(updateUI, 5000); 
+                } else { alert("Kod Hatalı!"); }
+            } catch(e) { alert("Bağlantı hatası!"); }
+        }
+
+        async function updateUI() {
+            const res = await fetch(`${DB_URL}.json`);
+            const data = await res.json();
+            if(!data) return;
+            db = data.countries;
+            const ui = document.getElementById('main-ui');
+            const mapDiv = document.getElementById('strategy-map');
+            ui.innerHTML = ""; mapDiv.innerHTML = "";
+
+            Object.keys(db).forEach((id, index) => {
+                const c = db[id];
+                const isMe = id === myId;
+                const tex = textures[index % 4];
+                if(isMe) document.getElementById('welcome').innerText = `Ülke: ${c.name}`;
+
+                ui.innerHTML += `
+                    <div class="card bg-${index % 4}">
+                        <div class="card-inner">
+                            <h3>${c.name} ${isMe ? "⭐" : ""}</h3>
+                            <p>💎 Polimer: ${Math.floor(c.polymer || 0)}</p>
+                            <p>🏗️ Ofis: ${c.offices || 0} | 🗺️ Alan: ${c.areas || 0}</p>
+                            ${isMe ? 
+                                `<button onclick="buy('areas', 15)">ALAN AL (15P)</button>
+                                 <button onclick="buy('offices', 20)" style="background:#d29922; border-color:#9e7013">OFİS KUR (20P)</button>` : 
+                                `<button class="btn-attack" onclick="attack('${id}')">SALDIR (10P)</button>`}
+                        </div>
+                    </div>
+                `;
+
+                let tiles = "";
+                for(let i=1; i<=10; i++) {
+                    tiles += `<div class="map-tile ${i <= (c.areas || 0) ? 'active' : ''}" style="background-image: ${tex}"></div>`;
+                }
+                mapDiv.innerHTML += `<div class="map-row"><div class="map-name">${c.name}</div><div class="map-slots">${tiles}</div></div>`;
+            });
+        }
+
+        async function buy(type, cost) {
+            const me = db[myId];
+            let updates = { polymer: me.polymer - cost };
+            updates[type] = (me[type] || 0) + 1;
+            await fetch(`${DB_URL}countries/${myId}.json`, { method: 'PATCH', body: JSON.stringify(updates) });
+            updateUI();
+        }
+
+        async function attack(targetId) {
+            const me = db[myId]; const target = db[targetId];
+            await fetch(`${DB_URL}countries/${myId}.json`, { method: 'PATCH', body: JSON.stringify({ polymer: me.polymer - 10 }) });
+            await fetch(`${DB_URL}countries/${targetId}.json`, { method: 'PATCH', body: JSON.stringify({ areas: (target.areas || 0) - 1 }) });
+            updateUI();
+        }
+    </script>
+</body>
+</html>
